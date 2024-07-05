@@ -76,7 +76,7 @@ class SqliteArticleRepository implements ArticleRepository
         ]);
     }
 
-    public function delete($id): void
+    public function deleteSoft($id): void
     {
         try {
             $deletedAt = Carbon::now()->toDateTimeString();
@@ -96,7 +96,7 @@ class SqliteArticleRepository implements ArticleRepository
         }
     }
 
-    public function deletePermanent($id): void
+    public function delete($id): void
     {
         $stmt = $this->db->prepare('DELETE FROM articles WHERE id = :id');
         $stmt->execute(['id' => $id]);
