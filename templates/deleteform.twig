@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Article</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
+<body class="flex justify-center items-center h-screen bg-gray-100">
+<div class="text-center max-w-4xl">
+<h1 class="text-3xl font-bold mb-6 mt-8">Delete Article</h1>
+<p class="text-lg mb-6">Are you sure you want to delete this article?</p>
+<form method="post" action="/article/{{ article.id }}/delete">
+    <input class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600" type="submit" value="Delete">
+    <a class="block mt-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600" href="/articles">Cancel</a>
+</form>
+</body>
+</html>

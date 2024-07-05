@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
+<body class="flex justify-center items-center h-screen bg-gray-100">
+<div class="text-center max-w-4xl">
+    <h1 class="text-3xl font-bold mb-6 mt-8">Articles</h1>
+    <ul class="grid gap-4">
+        {% for article in articles %}
+            <li class="bg-white p-4 rounded-lg shadow-md">
+                <a class="text-xl font-semibold text-blue-500 hover:underline" href="/article/{{ article.id }}">{{ article.title }}</a>
+                <p class="text-gray-600">by {{ article.author }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <a class="block mt-6 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600" href="/article/create">Create a new article</a>
+</div>
+</body>
+</html>
