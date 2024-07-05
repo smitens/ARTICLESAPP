@@ -29,7 +29,7 @@ class SqliteArticleRepository implements ArticleRepository
 
     public function findAll(): array
     {
-        $stmt = $this->db->query('SELECT * FROM articles ORDER BY createdAt DESC');
+        $stmt = $this->db->query('SELECT * FROM articles WHERE status = 1 ORDER BY createdAt DESC');
         $articles = [];
 
         while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -42,8 +42,8 @@ class SqliteArticleRepository implements ArticleRepository
     public function save(Article $article): void
     {
         $stmt = $this->db->prepare('INSERT INTO articles 
-            (author, title, content, createdAt, updatedAt, deletedAt) 
-            VALUES (:author, :title, :content, :createdAt, :updatedAt, :deletedAt)');
+            (author, title, content, createdAt, updatedAt, deletedAt, status) 
+            VALUES (:author, :title, :content, :createdAt, :updatedAt, :deletedAt, :status)');
 
         $stmt->execute([
             'author' => $article->getAuthor(),
@@ -52,6 +52,7 @@ class SqliteArticleRepository implements ArticleRepository
             'createdAt' => $article->getCreatedAt()->toDateTimeString(),
             'updatedAt' => $article->getUpdatedAt() ? $article->getUpdatedAt()->toDateTimeString() : null,
             'deletedAt' => $article->getDeletedAt() ? $article->getDeletedAt()->toDateTimeString() : null,
+            'status' => 1,
         ]);
 
         $articleId = (int)$this->db->lastInsertId();
@@ -61,7 +62,7 @@ class SqliteArticleRepository implements ArticleRepository
     public function update(Article $article): void
     {
         $stmt = $this->db->prepare('UPDATE articles 
-            SET author = :author, title = :title, content = :content, updatedAt = :updatedAt, deletedAt = :deletedAt 
+            SET status = :status, author = :author, title = :title, content = :content, updatedAt = :updatedAt, deletedAt = :deletedAt 
             WHERE id = :id');
 
         $stmt->execute([
@@ -71,10 +72,31 @@ class SqliteArticleRepository implements ArticleRepository
             'content' => $article->getContent(),
             'updatedAt' => $article->getUpdatedAt() ? $article->getUpdatedAt()->toDateTimeString() : null,
             'deletedAt' => $article->getDeletedAt() ? $article->getDeletedAt()->toDateTimeString() : null,
+            'status' => $article->getStatus()
         ]);
     }
 
     public function delete($id): void
+    {
+        try {
+            $deletedAt = Carbon::now()->toDateTimeString();
+
+            $stmt = $this->db->prepare
+            ('UPDATE articles SET status = :status, deletedAt = :deletedAt WHERE id = :id');
+
+            $stmt->execute([
+                'status' => 0,
+                'deletedAt' => $deletedAt,
+                'id' => $id
+            ]);
+
+            echo "Article updated successfully.";
+        } catch (\PDOException $e) {
+            throw new \Exception("Failed to delete article: " . $e->getMessage());
+        }
+    }
+
+    public function deletePermanent($id): void
     {
         $stmt = $this->db->prepare('DELETE FROM articles WHERE id = :id');
         $stmt->execute(['id' => $id]);
@@ -89,7 +111,8 @@ class SqliteArticleRepository implements ArticleRepository
             Carbon::parse($data['createdAt']),
             isset($data['updatedAt']) ? Carbon::parse($data['updatedAt']) : null,
             isset($data['deletedAt']) ? Carbon::parse($data['deletedAt']) : null,
-            $data['id']
+            $data['id'],
+            $data['status'],
         );
     }
 }

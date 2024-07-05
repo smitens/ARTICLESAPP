@@ -49,7 +49,8 @@ class SqliteDatabaseService implements DatabaseService
                 content TEXT NOT NULL,
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt DATETIME,
-                deletedAt DATETIME
+                deletedAt DATETIME,
+                status INTEGER NOT NULL DEFAULT 1                    
             )');
         } catch (PDOException $e) {
             throw new Exception("Error creating articles table: " . $e->getMessage());

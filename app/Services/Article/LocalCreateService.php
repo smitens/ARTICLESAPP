@@ -21,7 +21,7 @@ class LocalCreateService implements CreateService
     {
         try {
         $createdAt = Carbon::now();
-        $article = new Article(null, $author, $title, $content, $createdAt, null, null);
+        $article = new Article($author, $title, $content, $createdAt, null, null, null, 1);
         $this->articleRepository->save($article);
         } catch (Exception $e) {
             throw new CreateArticleException('Failed to create article: ' . $e->getMessage());
