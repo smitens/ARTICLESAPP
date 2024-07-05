@@ -15,7 +15,7 @@ ArticleApp is a web-based PHP application that allows you to manage and display 
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/yourusername/ArticleApp.git
+    git clone https://github.com/yourusername/ARTICLESAPP.git
     ```
 
 2. Install the required dependencies using Composer:
