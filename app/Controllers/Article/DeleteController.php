@@ -1,12 +1,12 @@
 <?php
 
-namespace ArticleApp\Controllers;
+namespace ArticleApp\Controllers\Article;
 
-use ArticleApp\Services\Article\DeleteService;
-use Symfony\Component\HttpFoundation\Request;
 use ArticleApp\RedirectResponse;
+use ArticleApp\Services\Article\DeleteService;
 use ArticleApp\Services\LogService;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 class DeleteController
 {

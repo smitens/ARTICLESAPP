@@ -1,12 +1,12 @@
 <?php
 
-namespace ArticleApp\Controllers;
+namespace ArticleApp\Controllers\Article;
 
-use ArticleApp\Services\Article\UpdateService;
-use Symfony\Component\HttpFoundation\Request;
-use ArticleApp\Services\LogService;
 use ArticleApp\RedirectResponse;
+use ArticleApp\Services\Article\UpdateService;
+use ArticleApp\Services\LogService;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 class UpdateController
 {
