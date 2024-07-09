@@ -1,4 +1,5 @@
 <?php
+
 namespace ArticleApp\Repositories\Article;
 
 use PDO;
@@ -62,7 +63,8 @@ class SqliteArticleRepository implements ArticleRepository
     public function update(Article $article): void
     {
         $stmt = $this->db->prepare('UPDATE articles 
-            SET status = :status, author = :author, title = :title, content = :content, updatedAt = :updatedAt, deletedAt = :deletedAt 
+            SET status = :status, author = :author, title = :title, content = :content, updatedAt = :updatedAt, 
+                deletedAt = :deletedAt 
             WHERE id = :id');
 
         $stmt->execute([

@@ -9,13 +9,17 @@ ArticleApp is a web-based PHP application that allows you to manage and display 
 - Create new article
 - Update article
 - Delete article
+- Like article
+- Create comments under each article
+- Like comments
+- Delete comments
 
 ## Installation
 
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/yourusername/ARTICLESAPP.git
+    git clone https://github.com/smitens/ARTICLESAPP/tree/V1.git
     ```
 
 2. Install the required dependencies using Composer:
@@ -52,5 +56,6 @@ The application uses [PHP-DI](https://php-di.org/) for dependency injection.
 
 ---
 
-This project was a part of Codelex programmin in PHP course homework assignments.
+This project was a part of Codelex programming course on PHP course homework assignments.
+
 By following this README, you should be able to set up and run the ArticleApp application on your local machine. 

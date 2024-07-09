@@ -8,5 +8,5 @@ interface DatabaseService
 {
     public function initializeDatabase(): void;
     public function connectToDatabase(): ?PDO;
-    public function createArticlesTable(PDO $pdo): void;
+    public function createTables(PDO $pdo): void;
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace ArticleApp\Controllers;
+namespace ArticleApp\Controllers\Article;
 
 use ArticleApp\Response;
 use ArticleApp\Services\LogService;

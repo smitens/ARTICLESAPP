@@ -1,12 +1,12 @@
 <?php
 
-namespace ArticleApp\Controllers;
+namespace ArticleApp\Controllers\Article;
 
-use ArticleApp\Services\Article\GetAllService;
-use Symfony\Component\HttpFoundation\Request;
-use ArticleApp\Services\LogService;
 use ArticleApp\Response;
+use ArticleApp\Services\Article\GetAllService;
+use ArticleApp\Services\LogService;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 class GetAllController
 {
