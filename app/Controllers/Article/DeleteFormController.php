@@ -25,10 +25,11 @@ class DeleteFormController
 
         try {
             $article = $this->getByIdService->getArticleById($id);
-            $this->logger->log('Delete form showed successfully for article no. ' . $id . '.');
+            $this->logger->log('info','Delete form showed successfully for article no. ' . $id . '.');
             return new Response('deleteform.twig', ['article' => $article]);
         } catch (Exception $e) {
-            $this->logger->log('Error showing delete form for article no. ' . $id . ' .' . $e->getMessage());
+            $this->logger->log
+            ('error','Error showing delete form for article no. ' . $id . ' .' . $e->getMessage());
             return new Response('error.twig', ['error_message' => $e->getMessage()]);
         }
     }

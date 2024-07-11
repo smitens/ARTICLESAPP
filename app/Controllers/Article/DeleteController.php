@@ -25,10 +25,10 @@ class DeleteController
 
         try {
             $this->deleteService->deleteArticle($id);
-            $this->logger->log('Article Id no. ' . $id . ' deleted successfully.');
+            $this->logger->log('info','Article Id no. ' . $id . ' deleted successfully.');
             return new RedirectResponse('/articles');
         } catch (Exception $e) {
-            $this->logger->log('Error deleting article Id no. ' . $id . ' :' . $e->getMessage());
+            $this->logger->log('error','Error deleting article Id no. ' . $id . ' :' . $e->getMessage());
             return new RedirectResponse('/article/' . $id . '?error=' . urlencode($e->getMessage()));
         }
     }

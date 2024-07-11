@@ -1,31 +1,28 @@
 <?php
+
 namespace ArticleApp\Services\Article;
 
 use ArticleApp\Models\Article;
 use ArticleApp\Exceptions\ArticleDisplayException;
 use ArticleApp\Repositories\Article\ArticleRepository;
 use ArticleApp\Repositories\Comment\CommentRepository;
-use ArticleApp\Repositories\Like\Article\ArticleLikeRepository;
-use ArticleApp\Repositories\Like\Comment\CommentLikeRepository;
+use ArticleApp\Repositories\Like\LikeRepository;
 use Exception;
 
 class LocalGetByIdService implements GetByIdService
 {
     private ArticleRepository $articleRepository;
     private CommentRepository $commentRepository;
-    private ArticleLikeRepository $articleLikeRepository;
-    private CommentLikeRepository $commentLikeRepository;
+    private LikeRepository $likeRepository;
 
     public function __construct(
         ArticleRepository $articleRepository,
         CommentRepository $commentRepository,
-        ArticleLikeRepository $articleLikeRepository,
-        CommentLikeRepository $commentLikeRepository
+        LikeRepository $likeRepository
     ) {
         $this->articleRepository = $articleRepository;
         $this->commentRepository = $commentRepository;
-        $this->articleLikeRepository = $articleLikeRepository;
-        $this->commentLikeRepository = $commentLikeRepository;
+        $this->likeRepository = $likeRepository;
     }
 
     public function getArticleWithComments(int $articleId): array
@@ -37,11 +34,11 @@ class LocalGetByIdService implements GetByIdService
         }
 
         $comments = $this->commentRepository->getByArticleId($articleId);
-        $articleLikeCount = $this->articleLikeRepository->countLikesForArticle($articleId);
+        $articleLikeCount = $this->likeRepository->count($articleId, 'article');
 
         $commentLikes = [];
         foreach ($comments as $comment) {
-            $commentLikes[$comment->getId()] = $this->commentLikeRepository->countLikesForComment($comment->getId());
+            $commentLikes[$comment->getId()] = $this->likeRepository->count($comment->getId(), 'comment');
         }
 
         return [

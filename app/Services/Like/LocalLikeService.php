@@ -2,33 +2,25 @@
 
 namespace ArticleApp\Services\Like;
 
-use ArticleApp\Models\ArticleLike;
-use ArticleApp\Models\CommentLike;
-use ArticleApp\Repositories\Like\Article\ArticleLikeRepository;
-use ArticleApp\Repositories\Like\Comment\CommentLikeRepository;
+use ArticleApp\Models\Like;
+use ArticleApp\Repositories\Like\LikeRepository;
 use Carbon\Carbon;
 use Exception;
 
 class LocalLikeService
 {
-    private ArticleLikeRepository $articleLikeRepository;
-    private CommentLikeRepository $commentLikeRepository;
+    private LikeRepository $likeRepository;
 
-    public function __construct
-    (
-        ArticleLikeRepository $articleLikeRepository,
-        CommentLikeRepository $commentLikeRepository
-    )
+    public function __construct(LikeRepository $likeRepository)
     {
-        $this->articleLikeRepository = $articleLikeRepository;
-        $this->commentLikeRepository = $commentLikeRepository;
+        $this->likeRepository = $likeRepository;
     }
 
     public function likeArticle(int $articleId): void
     {
         try {
             $createdAt = Carbon::now();
-            $this->articleLikeRepository->save(new ArticleLike($articleId, $createdAt, null));
+            $this->likeRepository->save(new Like($articleId, 'article', $createdAt, null));
         } catch (Exception $e) {
             throw new Exception('Error liking article: ' . $e->getMessage());
         }
@@ -38,7 +30,7 @@ class LocalLikeService
     {
         try {
             $createdAt = Carbon::now();
-            $this->commentLikeRepository->save(new CommentLike($commentId, $createdAt, null));
+            $this->likeRepository->save(new Like($commentId, 'comment', $createdAt, null));
         } catch (Exception $e) {
             throw new Exception('Error liking comment: ' . $e->getMessage());
         }

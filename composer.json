@@ -13,7 +13,8 @@
     "symfony/http-foundation": "^5.4",
     "symfony/twig-bundle": "^5.4",
     "symfony/routing": "^5.4",
-    "monolog/monolog": "^2.9"
+    "monolog/monolog": "^2.9",
+    "respect/validation": "^2.2"
   },
   "autoload": {
     "psr-4": {

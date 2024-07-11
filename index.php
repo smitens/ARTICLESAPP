@@ -12,10 +12,8 @@ use ArticleApp\Repositories\Article\ArticleRepository;
 use ArticleApp\Repositories\Article\SqliteArticleRepository;
 use ArticleApp\Repositories\Comment\CommentRepository;
 use ArticleApp\Repositories\Comment\SqliteCommentRepository;
-use ArticleApp\Repositories\Like\Article\ArticleLikeRepository;
-use ArticleApp\Repositories\Like\Article\SqliteArticleLikeRepository;
-use ArticleApp\Repositories\Like\Comment\CommentLikeRepository;
-use ArticleApp\Repositories\Like\Comment\SqliteCommentLikeRepository;
+use ArticleApp\Repositories\Like\LikeRepository;
+use ArticleApp\Repositories\Like\SqliteLikeRepository;
 use ArticleApp\Services\LogService;
 use ArticleApp\Services\MonologLogService;
 use ArticleApp\Services\Article\CreateService;
@@ -48,12 +46,14 @@ use ArticleApp\Controllers\Article\CreateFormController;
 use ArticleApp\Controllers\Article\UpdateFormController;
 use ArticleApp\Controllers\Comment\CreateCommentController;
 use ArticleApp\Controllers\Comment\DeleteCommentController;
-use ArticleApp\Controllers\Article\ArticleLikeController;
-use ArticleApp\Controllers\Comment\CommentLikeController;
+use ArticleApp\Controllers\LikeController;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use FastRoute\RouteCollector;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 
 $containerBuilder = new ContainerBuilder();
 
@@ -71,11 +71,8 @@ $containerBuilder->addDefinitions([
     CommentRepository::class => function (Container $container) {
         return new SqliteCommentRepository($container->get(PDO::class));
     },
-    ArticleLikeRepository::class => function (Container $container) {
-        return new SqliteArticleLikeRepository($container->get(PDO::class));
-    },
-    CommentLikeRepository::class => function (Container $container) {
-        return new SqliteCommentLikeRepository($container->get(PDO::class));
+    LikeRepository::class => function (Container $container) {
+        return new SqliteLikeRepository($container->get(PDO::class));
     },
     LogService::class => function () {
         return new MonologLogService();
@@ -89,9 +86,8 @@ $containerBuilder->addDefinitions([
     DeleteService::class => function (Container $container) {
         return new LocalDeleteService(
             $container->get(ArticleRepository::class),
-            $container->get(ArticleLikeRepository::class),
-            $container->get(CommentRepository::class),
-            $container->get(CommentLikeRepository::class)
+            $container->get(LikeRepository::class),
+            $container->get(CommentRepository::class)
         );
     },
     GetAllService::class => function (Container $container) {
@@ -101,17 +97,19 @@ $containerBuilder->addDefinitions([
         return new LocalGetByIdService(
             $container->get(ArticleRepository::class),
             $container->get(CommentRepository::class),
-            $container->get(ArticleLikeRepository::class),
-            $container->get(CommentLikeRepository::class)
+            $container->get(LikeRepository::class)
         );
     },
     CreateCommentService::class => function (Container $container) {
-        return new LocalCreateCommentService($container->get(CommentRepository::class));
+        return new LocalCreateCommentService(
+            $container->get(CommentRepository::class)
+        );
     },
     DeleteCommentService::class => function (Container $container) {
         return new LocalDeleteCommentService(
             $container->get(CommentRepository::class),
-            $container->get(CommentLikeRepository::class)
+            $container->get(LikeRepository::class),
+            $container->get(PDO::class)
         );
     },
     GetByArticleIdService::class => function (Container $container) {
@@ -119,14 +117,11 @@ $containerBuilder->addDefinitions([
     },
     CountService::class => function (Container $container) {
         return new LocalCountService(
-            $container->get(ArticleLikeRepository::class),
-            $container->get(CommentLikeRepository::class)
+            $container->get(LikeRepository::class)
         );
     },
     LikeService::class => function (Container $container) {
-        return new LocalLikeService(
-            $container->get(ArticleLikeRepository::class),
-            $container->get(CommentLikeRepository::class)
+        return new LocalLikeService($container->get(LikeRepository::class)
         );
     },
     IndexController::class => function (Container $container) {
@@ -135,7 +130,8 @@ $containerBuilder->addDefinitions([
     CreateController::class => function (Container $container) {
         return new CreateController(
             $container->get(CreateService::class),
-            $container->get(LogService::class)
+            $container->get(LogService::class),
+            $container->get(SessionInterface::class)
         );
     },
     DeleteController::class => function (Container $container) {
@@ -159,11 +155,14 @@ $containerBuilder->addDefinitions([
     GetByIdController::class => function (Container $container) {
         return new GetByIdController(
             $container->get(GetByIdService::class),
-            $container->get(LogService::class)
+            $container->get(LogService::class),
+            $container->get(SessionInterface::class)
         );
     },
     CreateFormController::class => function (Container $container) {
-        return new CreateFormController($container->get(LogService::class));
+        return new CreateFormController(
+            $container->get(LogService::class),
+            $container->get(SessionInterface::class));
     },
     UpdateFormController::class => function (Container $container) {
         return new UpdateFormController(
@@ -174,7 +173,8 @@ $containerBuilder->addDefinitions([
     CreateCommentController::class => function (Container $container) {
         return new CreateCommentController(
             $container->get(CreateCommentService::class),
-            $container->get(LogService::class)
+            $container->get(LogService::class),
+            $container->get(SessionInterface::class)
         );
     },
     DeleteCommentController::class => function (Container $container) {
@@ -183,19 +183,19 @@ $containerBuilder->addDefinitions([
             $container->get(LogService::class)
         );
     },
-    ArticleLikeController::class => function (Container $container) {
-        return new ArticleLikeController(
+    LikeController::class => function (Container $container) {
+        return new LikeController(
             $container->get(LikeService::class),
             $container->get(LogService::class)
         );
     },
-    CommentLikeController::class => function (Container $container) {
-        return new CommentLikeController(
-            $container->get(LikeService::class),
-            $container->get(LogService::class)
-        );
+    SessionInterface::class => function () {
+        $session = new Session();
+        $session->start();
+        return $session;
     },
-    'routes' => require __DIR__ . '/routes.php',
+
+'routes' => require __DIR__ . '/routes.php',
 ]);
 
 $container = $containerBuilder->build();

@@ -10,6 +10,8 @@ class Article
     private string $title;
     private string $content;
     private Carbon $createdAt;
+    private int $likeCount;
+    private int $commentCount;
     private ?Carbon $updatedAt;
     private ?Carbon $deletedAt;
     private ?int $id;
@@ -22,6 +24,8 @@ class Article
         string $title,
         string $content,
         Carbon $createdAt,
+        int $likeCount = 0,
+        int $commentCount = 0,
         ?Carbon $updatedAt = null,
         ?Carbon $deletedAt = null,
         ?int $id = null,
@@ -33,6 +37,8 @@ class Article
         $this->title = $title;
         $this->content = $content;
         $this->createdAt = $createdAt;
+        $this->likeCount = $likeCount;
+        $this->commentCount = $commentCount;
         $this->updatedAt = $updatedAt;
         $this->deletedAt = $deletedAt;
         $this->id = $id;
@@ -77,6 +83,26 @@ class Article
     public function getDeletedAt(): ?Carbon
     {
         return $this->deletedAt;
+    }
+
+    public function getLikeCount(): int
+    {
+        return $this->likeCount;
+    }
+
+    public function getCommentCount(): int
+    {
+        return $this->commentCount;
+    }
+
+    public function setLikeCount(int $likeCount): void
+    {
+        $this->likeCount = $likeCount;
+    }
+
+    public function setCommentCount(int $commentCount): void
+    {
+        $this->commentCount = $commentCount;
     }
 
     public function setId(int $id): void
