@@ -43,14 +43,16 @@ class SqliteArticleRepository implements ArticleRepository
     public function save(Article $article): void
     {
         $stmt = $this->db->prepare('INSERT INTO articles 
-            (author, title, content, createdAt, updatedAt, deletedAt, status) 
-            VALUES (:author, :title, :content, :createdAt, :updatedAt, :deletedAt, :status)');
+            (author, title, content, createdAt, updatedAt, likeCount, commentCount, deletedAt, status) 
+            VALUES (:author, :title, :content, :createdAt, :likeCount, :commentCount, :updatedAt, :deletedAt, :status)');
 
         $stmt->execute([
             'author' => $article->getAuthor(),
             'title' => $article->getTitle(),
             'content' => $article->getContent(),
             'createdAt' => $article->getCreatedAt()->toDateTimeString(),
+            'likeCount' => $article->getLikeCount(),
+            'commentCount' => $article->getCommentCount(),
             'updatedAt' => $article->getUpdatedAt() ? $article->getUpdatedAt()->toDateTimeString() : null,
             'deletedAt' => $article->getDeletedAt() ? $article->getDeletedAt()->toDateTimeString() : null,
             'status' => 1,
@@ -63,8 +65,8 @@ class SqliteArticleRepository implements ArticleRepository
     public function update(Article $article): void
     {
         $stmt = $this->db->prepare('UPDATE articles 
-            SET status = :status, author = :author, title = :title, content = :content, updatedAt = :updatedAt, 
-                deletedAt = :deletedAt 
+            SET status = :status, author = :author, title = :title, content = :content, likeCount = :likeCount, 
+                commentCount = :commentCount, updatedAt = :updatedAt, deletedAt = :deletedAt 
             WHERE id = :id');
 
         $stmt->execute([
@@ -72,6 +74,8 @@ class SqliteArticleRepository implements ArticleRepository
             'author' => $article->getAuthor(),
             'title' => $article->getTitle(),
             'content' => $article->getContent(),
+            'likeCount' => $article->getLikeCount(),
+            'commentCount' => $article->getCommentCount(),
             'updatedAt' => $article->getUpdatedAt() ? $article->getUpdatedAt()->toDateTimeString() : null,
             'deletedAt' => $article->getDeletedAt() ? $article->getDeletedAt()->toDateTimeString() : null,
             'status' => $article->getStatus()
@@ -111,6 +115,8 @@ class SqliteArticleRepository implements ArticleRepository
             $data['title'],
             $data['content'],
             Carbon::parse($data['createdAt']),
+            0,
+            0,
             isset($data['updatedAt']) ? Carbon::parse($data['updatedAt']) : null,
             isset($data['deletedAt']) ? Carbon::parse($data['deletedAt']) : null,
             $data['id'],

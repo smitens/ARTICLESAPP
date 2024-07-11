@@ -14,10 +14,10 @@ return [
     ['GET', '/article/{id:\d+}/delete', 'Article\DeleteFormController'],
     ['POST', '/article/{id:\d+}/delete', 'Article\DeleteController'],
 
-    ['POST', '/article/{id:\d+}/like', 'Article\ArticleLikeController'],
+    ['POST', '/article/{id:\d+}/like', 'LikeController'],
 
     ['POST', '/comment/{id:\d+}/delete', 'Comment\DeleteCommentController'],
     ['POST', '/article/{id:\d+}/comment', 'Comment\CreateCommentController'],
 
-    ['POST', '/comment/{id:\d+}/like', 'Comment\CommentLikeController'],
+    ['POST', '/comment/{id:\d+}/like', 'LikeController'],
 ];

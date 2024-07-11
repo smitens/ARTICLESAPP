@@ -23,10 +23,10 @@ class GetAllController
     {
         try {
             $articles = $this->getAllService->getAllArticles();
-            $this->logger->log('Articles displayed successfully.');
+            $this->logger->log('info', 'Articles displayed successfully.');
             return new Response('articles.twig', ['articles' => $articles]);
         } catch (Exception $e) {
-            $this->logger->log('Error displaying articles: ' . $e->getMessage());
+            $this->logger->log('error', 'Error displaying articles: ' . $e->getMessage());
             return new Response('error.twig', ['error_message' => $e->getMessage()]);
         }
     }

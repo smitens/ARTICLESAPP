@@ -2,29 +2,22 @@
 
 namespace ArticleApp\Services\Like;
 
-use ArticleApp\Repositories\Like\Article\ArticleLikeRepository;
-use ArticleApp\Repositories\Like\Comment\CommentLikeRepository;
+use ArticleApp\Repositories\Like\LikeRepository;
 use Exception;
 
 class LocalCountService implements CountService
 {
-    private ArticleLikeRepository $articleLikeRepository;
-    private CommentLikeRepository $commentLikeRepository;
+    private LikeRepository $likeRepository;
 
-    public function __construct
-    (
-        ArticleLikeRepository $articleLikeRepository,
-        CommentLikeRepository $commentLikeRepository
-    )
+    public function __construct(LikeRepository $likeRepository)
     {
-        $this->articleLikeRepository = $articleLikeRepository;
-        $this->commentLikeRepository = $commentLikeRepository;
+        $this->likeRepository = $likeRepository;
     }
 
     public function getArticleLikesCount(int $articleId): int
     {
         try {
-            return $this->articleLikeRepository->countLikesForArticle($articleId);
+            return $this->likeRepository->count($articleId, 'article');
         } catch (Exception $e) {
             throw new Exception('Error getting article likes count: ' . $e->getMessage());
         }
@@ -33,7 +26,7 @@ class LocalCountService implements CountService
     public function getCommentLikesCount(int $commentId): int
     {
         try {
-            return $this->commentLikeRepository->countLikesForComment($commentId);
+            return $this->likeRepository->count($commentId, 'comment');
         } catch (Exception $e) {
             throw new Exception('Error getting comment likes count: ' . $e->getMessage());
         }

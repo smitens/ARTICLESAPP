@@ -23,6 +23,7 @@ class SqliteCommentRepository implements CommentRepository
             VALUES (:articleId, :author, :content, :createdAt)');
 
         try {
+
             $stmt->execute([
                 'articleId' => $comment->getArticleId(),
                 'author' => $comment->getAuthor(),
@@ -32,9 +33,24 @@ class SqliteCommentRepository implements CommentRepository
 
             $commentId = (int)$this->db->lastInsertId();
             $comment->setId($commentId);
+
         } catch (Exception $e) {
+            $this->db->rollBack();
             throw new Exception('Failed to save comment: ' . $e->getMessage());
         }
+    }
+
+    public function getById(int $id): ?Comment
+    {
+        $stmt = $this->db->prepare('SELECT * FROM comments WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$data) {
+            return null;
+        }
+
+        return $this->createCommentFromData($data);
     }
 
     public function getByArticleId(int $articleId): array
@@ -50,17 +66,18 @@ class SqliteCommentRepository implements CommentRepository
         return $comments;
     }
 
-
     public function delete(int $id): void
     {
         $query = "DELETE FROM comments WHERE id = :id";
 
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(['id' => $id]);
-
         try {
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to delete comment.');
+            $stmt = $this->db->prepare($query);
+            $stmt->execute(['id' => $id]);
+
+            if ($stmt->rowCount() > 0) {
+                $this->updateArticleCommentCount($id);
+            } else {
+                throw new Exception('Comment not deleted: ID not found.');
             }
         } catch (Exception $e) {
             throw new Exception('Failed to delete comment: ' . $e->getMessage());
@@ -84,8 +101,27 @@ class SqliteCommentRepository implements CommentRepository
             $data['author'],
             $data['content'],
             Carbon::parse($data['createdAt']),
+            $data['likeCount'],
             isset($data['deletedAt']) ? Carbon::parse($data['deletedAt']) : null,
             $data['id'],
         );
+    }
+
+    public function countComments(int $articleId): int
+    {
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM comments WHERE articleId = :articleId');
+        $stmt->execute(['articleId' => $articleId]);
+        return (int)$stmt->fetchColumn();
+    }
+
+    private function updateArticleCommentCount(int $articleId): void
+    {
+        $count = $this->countComments($articleId);
+
+        $updateStmt = $this->db->prepare('UPDATE articles SET commentCount = :commentCount WHERE id = :articleId');
+        $updateStmt->execute([
+            'commentCount' => $count,
+            'articleId' => $articleId,
+        ]);
     }
 }

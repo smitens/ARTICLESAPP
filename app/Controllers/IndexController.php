@@ -16,7 +16,7 @@ class IndexController
 
     public function __invoke(): Response
     {
-        $this->logger->log('Visitor entered index page.');
+        $this->logger->log('info', 'Visitor entered index page.');
         return new Response('index.twig', []);
     }
 }

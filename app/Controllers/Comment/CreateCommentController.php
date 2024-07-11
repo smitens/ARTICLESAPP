@@ -7,6 +7,7 @@ use ArticleApp\Services\Comment\CreateCommentService;
 use ArticleApp\Services\LogService;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Respect\Validation\Validator as v;
 
 class CreateCommentController
 {
@@ -27,16 +28,16 @@ class CreateCommentController
 
         if (empty($author) || empty($content)) {
             $errorMessage = 'All fields are required.';
-            $this->logger->log('Error creating comment: ' . $errorMessage);
+            $this->logger->log('error','Error creating comment: ' . $errorMessage);
             return new RedirectResponse("/article/{$articleId}?error=" . urlencode($errorMessage));
         }
 
         try {
-            $this->createCommentService->createComment($articleId, $author, $content);
-            $this->logger->log('Comment created successfully.');
+            $this->createCommentService->create($articleId, $author, $content);
+            $this->logger->log('info','Comment created successfully.');
             return new RedirectResponse("/article/{$articleId}");
         } catch (Exception $e) {
-            $this->logger->log('Error creating comment: ' . $e->getMessage());
+            $this->logger->log('error','Error creating comment: ' . $e->getMessage());
             return new RedirectResponse("/article/{$articleId}?error=" . urlencode($e->getMessage()));
         }
     }

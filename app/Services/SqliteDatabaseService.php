@@ -44,8 +44,7 @@ class SqliteDatabaseService implements DatabaseService
     {
         $this->createArticlesTable($pdo);
         $this->createCommentsTable($pdo);
-        $this->createArticleLikesTable($pdo);
-        $this->createCommentLikesTable($pdo);
+        $this->createLikesTable($pdo);
     }
 
     private function createArticlesTable(PDO $pdo): void
@@ -59,7 +58,9 @@ class SqliteDatabaseService implements DatabaseService
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt DATETIME,
                 deletedAt DATETIME,
-                status INTEGER NOT NULL DEFAULT 1                    
+                status INTEGER NOT NULL DEFAULT 1,
+                likeCount INTEGER NOT NULL DEFAULT 0,
+                commentCount INTEGER NOT NULL DEFAULT 0                    
             )');
         } catch (PDOException $e) {
             throw new Exception("Error creating articles table: " . $e->getMessage());
@@ -76,6 +77,7 @@ class SqliteDatabaseService implements DatabaseService
                 author TEXT,
                 content TEXT,
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                likeCount INTEGER NOT NULL DEFAULT 0,
                 FOREIGN KEY (articleId) REFERENCES articles(id) ON DELETE CASCADE
             );');
             } catch (PDOException $e) {
@@ -83,33 +85,18 @@ class SqliteDatabaseService implements DatabaseService
             }
         }
 
-        private function createArticleLikesTable(PDO $pdo): void
+        private function createLikesTable(PDO $pdo): void
         {
             try {
-                $pdo->exec('CREATE TABLE IF NOT EXISTS articleLikes 
+                $pdo->exec('CREATE TABLE IF NOT EXISTS likes 
             (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                articleId INTEGER,
-                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (articleId) REFERENCES articles(id) ON DELETE CASCADE
+                likeObjectId INTEGER NOT NULL,
+                likeObjectType STRING NOT NULL,
+                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
             );');
             } catch (PDOException $e) {
                 throw new Exception("Error creating article likes table: " . $e->getMessage());
             }
         }
-
-    private function createCommentLikesTable(PDO $pdo): void
-    {
-        try {
-            $pdo->exec('CREATE TABLE IF NOT EXISTS commentLikes 
-            (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                commentId INTEGER,
-                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (commentId) REFERENCES comments(id) ON DELETE CASCADE
-            );');
-        } catch (PDOException $e) {
-            throw new Exception("Error creating articles table: " . $e->getMessage());
-        }
-    }
 }

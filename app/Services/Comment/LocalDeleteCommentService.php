@@ -3,44 +3,66 @@
 namespace ArticleApp\Services\Comment;
 
 use ArticleApp\Repositories\Comment\CommentRepository;
-use ArticleApp\Repositories\Like\Comment\SqliteCommentLikeRepository;
+use ArticleApp\Repositories\Like\SqliteLikeRepository;
 use ArticleApp\Exceptions\DeleteCommentException;
 use Exception;
+use PDO;
+
 
 class LocalDeleteCommentService implements DeleteCommentService
 {
     private CommentRepository $commentRepository;
-    private SqliteCommentLikeRepository $sqliteCommentLikeRepository;
+    private SqliteLikeRepository $likeRepository;
+    private PDO $db;
 
-    public function __construct
-    (
+    public function __construct(
         CommentRepository $commentRepository,
-        SqliteCommentLikeRepository $sqliteCommentLikeRepository
-    )
-    {
+        SqliteLikeRepository $likeRepository,
+        PDO $db
+    ) {
         $this->commentRepository = $commentRepository;
-        $this->sqliteCommentLikeRepository = $sqliteCommentLikeRepository;
-
+        $this->likeRepository = $likeRepository;
+        $this->db = $db;
     }
 
     public function deleteByArticleId(int $articleId): void
     {
-        try{
-        $this->sqliteCommentLikeRepository->deleteCommentLikesByArticleId($articleId);
-        $this->commentRepository->deleteByArticleId($articleId);
+        try {
+            $comments = $this->commentRepository->getByArticleId($articleId);
+
+            foreach ($comments as $comment) {
+                $this->deleteCommentLikes($comment->getId());
+            }
+
+            $this->commentRepository->deleteByArticleId($articleId);
+
         } catch (Exception $e) {
             throw new DeleteCommentException('Failed to delete comments by articleId: ' . $e->getMessage());
         }
     }
 
-    public function deleteComment(int $id): void
+    public function delete(int $id): void
     {
-        try{
-            $this->sqliteCommentLikeRepository->deleteByCommentId($id);
+        try {
+            $this->deleteCommentLikes($id);
 
             $this->commentRepository->delete($id);
+
         } catch (Exception $e) {
             throw new DeleteCommentException('Failed to delete comment: ' . $e->getMessage());
+        }
+    }
+
+    private function deleteCommentLikes(int $commentId): void
+    {
+        try {
+            $this->likeRepository->delete($commentId, 'comment');
+
+            $updateStmt = $this->db->prepare('UPDATE comments SET likeCount = 0 WHERE id = :commentId');
+            $updateStmt->execute(['commentId' => $commentId]);
+
+        } catch (Exception $e) {
+            throw new DeleteCommentException('Failed to delete comment likes: ' . $e->getMessage());
         }
     }
 }

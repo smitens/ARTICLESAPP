@@ -1,10 +1,12 @@
-Article Id no. 1 displayed successfully.
-Update form showed successfully for article no. 1.
-Articles displayed successfully.
-Article Id no. 1 displayed successfully.
-Delete form showed successfully for article no. 1.
-Articles displayed successfully.
-Visitor entered index page.
-Visitor entered index page.
-Articles displayed successfully.
-Article Id no. 1 displayed successfully.
+[2024-07-10 19:42:19] Article Id no. 3 displayed successfully.
+[2024-07-10 19:42:23] Error deleting comment: Failed to delete comment: There is no active transaction
+[2024-07-10 19:42:23] Articles displayed successfully.
+[2024-07-10 19:43:58] Visitor entered index page.
+[2024-07-10 19:44:00] Articles displayed successfully.
+[2024-07-10 19:44:01] Article Id no. 3 displayed successfully.
+[2024-07-10 19:44:07] Error deleting comment: Failed to delete comment: There is no active transaction
+[2024-07-10 19:44:07] Articles displayed successfully.
+[2024-07-10 19:45:10] Visitor entered index page.
+[2024-07-10 19:45:11] Articles displayed successfully.
+[2024-07-10 19:45:12] Article Id no. 3 displayed successfully.
+[2024-07-10 19:45:15] Error deleting comment: Failed to delete comment: There is no active transactionfully.

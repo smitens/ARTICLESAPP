@@ -16,7 +16,7 @@ class CreateFormController
 
     public function __invoke(): Response
     {
-        $this->logger->log('Create form showed successfully.');
+        $this->logger->log('info','Create form showed successfully.');
         return new Response('createform.twig', []);
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace ArticleApp\Services;
 
 use Monolog\Logger;
@@ -12,15 +11,20 @@ class MonologLogService implements LogService
 
     public function __construct()
     {
-        $formatter = new LineFormatter("%message%\n");
+        $dateFormat = "Y-m-d H:i:s";
+        $output = "[%datetime%] %message%\n";
+
+        $formatter = new LineFormatter($output, $dateFormat, true, true);
+
         $this->logger = new Logger('article_app');
-        $this->logger->pushHandler(new StreamHandler(__DIR__ . '/../../articleapp.log', Logger::INFO));
-        $handler = $this->logger->getHandlers()[0];
-        $handler->setFormatter($formatter);
+
+        $streamHandler = new StreamHandler(__DIR__ . '/../../articleapp.log', Logger::INFO);
+        $streamHandler->setFormatter($formatter);
+        $this->logger->pushHandler($streamHandler);
     }
 
-    public function log(string $message): void
+    public function log(string $level, string $message, array $context = []): void
     {
-        $this->logger->info($message);
+        $this->logger->log($level, $message, $context);
     }
 }

@@ -26,16 +26,16 @@ class DeleteCommentController
 
         if (empty($commentId)) {
             $errorMessage = 'Comment ID is required.';
-            $this->logger->log('Error deleting comment: ' . $errorMessage);
+            $this->logger->log('error','Error deleting comment: ' . $errorMessage);
             return new RedirectResponse('/articles?error=' . urlencode($errorMessage));
         }
 
         try {
-            $this->deleteCommentService->deleteComment($commentId);
-            $this->logger->log('Comment deleted successfully.');
+            $this->deleteCommentService->delete($commentId);
+            $this->logger->log('info','Comment deleted successfully.');
             return new RedirectResponse("/article/{$articleId}");
         } catch (Exception $e) {
-            $this->logger->log('Error deleting comment: ' . $e->getMessage());
+            $this->logger->log('error','Error deleting comment: ' . $e->getMessage());
             return new RedirectResponse('/articles?error=' . urlencode($e->getMessage()));
         }
     }

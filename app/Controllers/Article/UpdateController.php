@@ -28,10 +28,10 @@ class UpdateController
 
         try {
             $this->updateService->updateArticle($id, $author, $title, $content);
-            $this->logger->log('Article Id no. ' . $id . ' updated successfully.');
+            $this->logger->log('info','Article Id no. ' . $id . ' updated successfully.');
             return new RedirectResponse('/article/' . $id);
         } catch (Exception $e) {
-            $this->logger->log('Error updating article Id no. ' . $id . ':' . $e->getMessage());
+            $this->logger->log('error','Error updating article Id no. ' . $id . ':' . $e->getMessage());
             return new RedirectResponse('/article/' . $id . '/edit?error=' . urlencode($e->getMessage()));
         }
     }

@@ -17,12 +17,13 @@ class LocalCreateCommentService implements CreateCommentService
         $this->commentRepository = $commentRepository;
     }
 
-    public function createComment(int $articleId, string $author, string $content): void
+    public function create(int $articleId, string $author, string $content): void
     {
         try {
-        $createdAt = Carbon::now();
-        $comment = new Comment($articleId, $author, $content, $createdAt, null, null);
-        $this->commentRepository->save($comment);
+            $createdAt = Carbon::now();
+            $comment = new Comment($articleId, $author, $content, $createdAt, 0, null, null);
+            $this->commentRepository->save($comment);
+
         } catch (Exception $e) {
             throw new CreateCommentException('Failed to create comment: ' . $e->getMessage());
         }

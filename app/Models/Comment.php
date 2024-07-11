@@ -9,6 +9,7 @@ class Comment
     private int $articleId;
     private string $author;
     private string $content;
+    private int $likeCount;
     private Carbon $createdAt;
     private ?Carbon $deletedAt;
     private ?int $id;
@@ -20,15 +21,16 @@ class Comment
         string $author,
         string $content,
         Carbon $createdAt,
+        int $likeCount = 0,
         ?Carbon $deletedAt = null,
         ?int $id = null
 
     )
     {
-
         $this->articleId = $articleId;
         $this->author = $author;
         $this->content = $content;
+        $this->likeCount = $likeCount;
         $this->createdAt = $createdAt;
         $this->deletedAt = $deletedAt;
         $this->id = $id;
@@ -65,6 +67,11 @@ class Comment
         return $this->deletedAt;
     }
 
+    public function getLikeCount(): int
+    {
+        return $this->likeCount;
+    }
+
     public function setId(?int $id): void
     {
         $this->id = $id;
@@ -93,5 +100,10 @@ class Comment
     public function setDeletedAt(?Carbon $deletedAt): void
     {
         $this->deletedAt = $deletedAt;
+    }
+
+    public function setLikeCount(int $likeCount): void
+    {
+        $this->likeCount = $likeCount;
     }
 }

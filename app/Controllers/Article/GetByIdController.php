@@ -26,7 +26,7 @@ class GetByIdController
             $articleWithCommentsAndLikes = $this->getByIdService->getArticleWithComments($id);
 
             if (!$articleWithCommentsAndLikes['article']) {
-                $this->logger->log('Article ' . $id . ' not found');
+                $this->logger->log('error','Article ' . $id . ' not found');
                 return new Response('Article not found', []);
             }
 
@@ -35,7 +35,7 @@ class GetByIdController
             $articleLikes = $articleWithCommentsAndLikes['articleLikes'];
             $commentLikes = $articleWithCommentsAndLikes['commentLikes'];
 
-            $this->logger->log('Article Id no. ' . $id . ' displayed successfully.');
+            $this->logger->log('info','Article Id no. ' . $id . ' displayed successfully.');
             return new Response('article.twig', [
                 'article' => $article,
                 'comments' => $comments,
@@ -43,7 +43,7 @@ class GetByIdController
                 'commentLikes' => $commentLikes
             ]);
         } catch (Exception $e) {
-            $this->logger->log('Error displaying article Id no. ' . $id . ' : ' . $e->getMessage());
+            $this->logger->log('error','Error displaying article Id no. ' . $id . ' : ' . $e->getMessage());
             return new Response('error.twig', ['error_message' => $e->getMessage()]);
         }
     }

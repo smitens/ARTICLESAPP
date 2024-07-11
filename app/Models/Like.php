@@ -4,20 +4,23 @@ namespace ArticleApp\Models;
 
 use Carbon\Carbon;
 
-class ArticleLike
+class Like
 {
-    private int $articleId;
+    private int $likeObjectId;
+    private string $likeObjectType;
     private Carbon $createdAt;
     private ?int $id;
 
     public function __construct
     (
-        int $articleId,
+        int $likeObjectId,
+        string $likeObjectType,
         Carbon $createdAt,
         ?int $id
     )
     {
-        $this->articleId = $articleId;
+        $this->likeObjectId = $likeObjectId;
+        $this->likeObjectType = $likeObjectType;
         $this->createdAt = $createdAt;
         $this->id = $id;
     }
@@ -27,9 +30,14 @@ class ArticleLike
         return $this->id;
     }
 
-    public function getArticleId(): int
+    public function getLikeObjectId(): int
     {
-        return $this->articleId;
+        return $this->likeObjectId;
+    }
+
+    public function getLikeObjectType(): string
+    {
+        return $this->likeObjectType;
     }
 
     public function getCreatedAt(): Carbon
