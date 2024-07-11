@@ -155,11 +155,14 @@ $containerBuilder->addDefinitions([
     GetByIdController::class => function (Container $container) {
         return new GetByIdController(
             $container->get(GetByIdService::class),
-            $container->get(LogService::class)
+            $container->get(LogService::class),
+            $container->get(SessionInterface::class)
         );
     },
     CreateFormController::class => function (Container $container) {
-        return new CreateFormController($container->get(LogService::class));
+        return new CreateFormController(
+            $container->get(LogService::class),
+            $container->get(SessionInterface::class));
     },
     UpdateFormController::class => function (Container $container) {
         return new UpdateFormController(
@@ -170,7 +173,8 @@ $containerBuilder->addDefinitions([
     CreateCommentController::class => function (Container $container) {
         return new CreateCommentController(
             $container->get(CreateCommentService::class),
-            $container->get(LogService::class)
+            $container->get(LogService::class),
+            $container->get(SessionInterface::class)
         );
     },
     DeleteCommentController::class => function (Container $container) {
