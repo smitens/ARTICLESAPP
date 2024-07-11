@@ -51,8 +51,6 @@ class CreateController
                 'title' => $title,
             ]);
 
-            $this->session->remove('old_input');
-
             return new RedirectResponse('/articles');
         } catch (ValidationException $e) {
             $messages = $e->getMessages();
