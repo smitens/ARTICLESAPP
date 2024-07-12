@@ -22,7 +22,11 @@ class CreateFormController
         $this->logger->log('info', 'Create form showed successfully.');
 
         $flashMessages = $this->session->getFlashBag()->all();
+        $oldInput = $flashMessages['old_input'][0] ?? ['author' => '', 'title' => '', 'content' => ''];
 
-        return new Response('createform.twig', ['flashMessages' => $flashMessages]);
+        return new Response('createform.twig', [
+            'flashMessages' => $flashMessages,
+            'oldInput' => $oldInput,
+        ]);
     }
 }
