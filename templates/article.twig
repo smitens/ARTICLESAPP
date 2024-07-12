@@ -43,8 +43,8 @@
         </form>
 
         <form action="/article/{{ article.id }}/comment" method="post" class="mb-6">
-            <input type="text" name="author" placeholder="Your name" value="{{ app.request.query.get('author') ?? '' }}" class="w-full mb-2 p-2 border border-gray-300 rounded">
-            <textarea name="content" placeholder="Your comment" class="w-full mb-2 p-2 border border-gray-300 rounded">{{ app.request.query.get('content') ?? '' }}</textarea>
+            <input type="text" name="author" placeholder="Your name" value="{{ flashMessages.old_comment_input.0.author|default('') }}" class="w-full mb-2 p-2 border border-gray-300 rounded">
+            <textarea name="content" placeholder="Your comment" class="w-full mb-2 p-2 border border-gray-300 rounded">{{ flashMessages.old_comment_input.0.content|default('') }}</textarea>
             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Submit Comment</button>
         </form>
 

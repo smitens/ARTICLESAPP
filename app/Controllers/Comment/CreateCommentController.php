@@ -16,13 +16,11 @@ class CreateCommentController
     private LogService $logger;
     private SessionInterface $session;
 
-    public function __construct
-    (
+    public function __construct(
         CreateCommentService $createCommentService,
         LogService $logger,
         SessionInterface $session
-    )
-    {
+    ) {
         $this->createCommentService = $createCommentService;
         $this->logger = $logger;
         $this->session = $session;
@@ -31,8 +29,8 @@ class CreateCommentController
     public function __invoke(Request $request, array $vars): RedirectResponse
     {
         $articleId = (int) $vars['id'];
-        $author = $request->request->get('author');
-        $content = $request->request->get('content');
+        $author = $request->request->get('author', '');
+        $content = $request->request->get('content', '');
 
         $authorValidator = v::stringType()->notEmpty()->setName('Author');
         $contentValidator = v::stringType()->notEmpty()->setName('Content');
@@ -68,23 +66,29 @@ class CreateCommentController
             $errorMessage = implode(' ', $errorMessage);
 
             $this->session->getFlashBag()->add('error', $errorMessage);
+            $this->session->getFlashBag()->add('old_comment_input', [
+                'author' => $author,
+                'content' => $content,
+            ]);
             $this->logger->log('error', 'Validation errors: ' . $errorMessage, [
                 'author' => $author,
                 'content' => $content,
             ]);
 
-            return new RedirectResponse("/article/{$articleId}?author=" . urlencode($author) .
-                "&content=" . urlencode($content));
+            return new RedirectResponse("/article/{$articleId}");
         } catch (\Exception $e) {
             $errorMessage = 'Failed to create comment: ' . $e->getMessage();
             $this->session->getFlashBag()->add('error', $errorMessage);
+            $this->session->getFlashBag()->add('old_comment_input', [
+                'author' => $author,
+                'content' => $content,
+            ]);
             $this->logger->log('error', 'Error creating comment: ' . $errorMessage, [
                 'author' => $author,
                 'content' => $content,
             ]);
 
-            return new RedirectResponse("/article/{$articleId}?author=" . urlencode($author) .
-                "&content=" . urlencode($content));
+            return new RedirectResponse("/article/{$articleId}");
         }
     }
 }

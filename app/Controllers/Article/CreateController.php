@@ -17,13 +17,11 @@ class CreateController
     private LogService $logger;
     private SessionInterface $session;
 
-    public function __construct
-    (
+    public function __construct(
         CreateService $createService,
         LogService $logger,
         SessionInterface $session
-    )
-    {
+    ) {
         $this->createService = $createService;
         $this->logger = $logger;
         $this->session = $session;
@@ -31,9 +29,9 @@ class CreateController
 
     public function __invoke(Request $request): RedirectResponse
     {
-        $author = $request->request->get('author', $this->session->get('old_input.author'));
-        $title = $request->request->get('title', $this->session->get('old_input.title'));
-        $content = $request->request->get('content', $this->session->get('old_input.content'));
+        $author = $request->request->get('author', '');
+        $title = $request->request->get('title', '');
+        $content = $request->request->get('content', '');
 
         $authorValidator = v::stringType()->notEmpty()->setName('Author');
         $titleValidator = v::stringType()->notEmpty()->setName('Title');
@@ -77,9 +75,13 @@ class CreateController
             ]);
 
             $this->session->getFlashBag()->add('error', $errorMessage);
+            $this->session->getFlashBag()->add('old_input', [
+                'author' => $author,
+                'title' => $title,
+                'content' => $content,
+            ]);
 
-            return new RedirectResponse("/article/create?author=" . urlencode($title) . urlencode($author) .
-                "&content=" . urlencode($content));
+            return new RedirectResponse('/article/create');
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();
             $this->logger->log('error', 'Error creating article: ' . $errorMessage, [
@@ -89,9 +91,13 @@ class CreateController
             ]);
 
             $this->session->getFlashBag()->add('error', 'Failed to create article: ' . $errorMessage);
+            $this->session->getFlashBag()->add('old_input', [
+                'author' => $author,
+                'title' => $title,
+                'content' => $content,
+            ]);
 
-            return new RedirectResponse("/article/create?author=" . urlencode($title) . urlencode($author) .
-                "&content=" . urlencode($content));
+            return new RedirectResponse('/article/create');
         }
     }
 }
